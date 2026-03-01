@@ -1,0 +1,8 @@
+airflow_env/gcp-key.json
+.env
+__pycache__/
+*.pyc
+.DS_Store
+logs/
+airflow_env/data/
+airflow_env/airflow.db
