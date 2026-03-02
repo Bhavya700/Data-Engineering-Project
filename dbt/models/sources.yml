@@ -2,10 +2,13 @@ version: 2
 
 sources:
   - name: github
-    # Target the raw dataset where Github data is ingested
     database: "{{ env_var('DBT_BQ_PROJECT') }}"
     schema: gh_raw
     description: "Raw GitHub Data ingested via JSON APIs."
+    loaded_at_field: "timestamp(ingestion_date)"
+    freshness:
+      warn_after: {count: 24, period: hour}
+      error_after: {count: 48, period: hour}
     tables:
       - name: github_pulls_raw
         description: "Raw JSON payloads for pull requests"

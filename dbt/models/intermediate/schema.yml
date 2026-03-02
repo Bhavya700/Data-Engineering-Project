@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: int_pr_reviews_agg
+    description: "Aggregated PR review metrics at repository + PR grain."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - repo_full_name
+            - pr_number
+      - dbt_utils.expression_is_true:
+          expression: "review_count >= 0 and approvals_count >= 0 and changes_requested_count >= 0 and unique_reviewer_count >= 0"
+    columns:
+      - name: repo_full_name
+        tests:
+          - not_null
+      - name: pr_number
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+
+  - name: int_pr_lifecycle
+    description: "PR lifecycle metrics joined with review aggregates."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - repo_full_name
+            - pr_number
+      - dbt_utils.expression_is_true:
+          expression: "time_to_first_review_hours is null or time_to_first_review_hours >= 0"
+      - dbt_utils.expression_is_true:
+          expression: "time_to_merge_hours is null or time_to_merge_hours >= 0"
+      - dbt_utils.expression_is_true:
+          expression: "time_open_hours is null or time_open_hours >= 0"
+    columns:
+      - name: repo_full_name
+        tests:
+          - not_null
+      - name: pr_number
+        tests:
+          - not_null
+      - name: pull_request_id
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+
+  - name: int_issue_lifecycle
+    description: "Issue lifecycle metrics at repository + issue grain."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - repo_full_name
+            - issue_number
+      - dbt_utils.expression_is_true:
+          expression: "time_to_close_hours is null or time_to_close_hours >= 0"
+      - dbt_utils.expression_is_true:
+          expression: "issue_age_days is null or issue_age_days >= 0"
+    columns:
+      - name: repo_full_name
+        tests:
+          - not_null
+      - name: issue_number
+        tests:
+          - not_null
+      - name: issue_id
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null

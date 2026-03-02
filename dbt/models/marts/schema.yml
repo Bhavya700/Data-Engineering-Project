@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: fact_pr_cycle_time
+    description: "PR-level fact table with cycle-time and review metrics."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - repo_full_name
+            - pr_number
+      - dbt_utils.expression_is_true:
+          expression: "time_to_first_review_hours is null or time_to_first_review_hours >= 0"
+      - dbt_utils.expression_is_true:
+          expression: "time_to_merge_hours is null or time_to_merge_hours >= 0"
+      - dbt_utils.expression_is_true:
+          expression: "time_open_hours is null or time_open_hours >= 0"
+    columns:
+      - name: repo_full_name
+        tests:
+          - not_null
+      - name: pr_number
+        tests:
+          - not_null
+      - name: pull_request_id
+        tests:
+          - not_null
+      - name: created_date
+        tests:
+          - not_null
+
+  - name: fact_issue_aging
+    description: "Issue-level fact table with age, close latency, and stale flags."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - repo_full_name
+            - issue_number
+      - dbt_utils.expression_is_true:
+          expression: "time_to_close_hours is null or time_to_close_hours >= 0"
+      - dbt_utils.expression_is_true:
+          expression: "issue_age_days is null or issue_age_days >= 0"
+    columns:
+      - name: repo_full_name
+        tests:
+          - not_null
+      - name: issue_number
+        tests:
+          - not_null
+      - name: issue_id
+        tests:
+          - not_null
+      - name: created_date
+        tests:
+          - not_null
+
+  - name: mart_repo_health_daily
+    description: "Daily repo health metrics for PR throughput, review latency, and issue backlog."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - metric_date
+            - repo_full_name
+      - dbt_utils.expression_is_true:
+          expression: "prs_created_count >= 0 and prs_merged_count >= 0 and open_issues_count >= 0 and stale_issues_count >= 0"
+    columns:
+      - name: metric_date
+        tests:
+          - not_null
+      - name: repo_full_name
+        tests:
+          - not_null

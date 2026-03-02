@@ -1,0 +1,86 @@
+version: 2
+
+models:
+  - name: stg_github_pulls
+    description: "Latest state of each GitHub pull request by repository and PR number."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - repo_full_name
+            - pr_number
+    columns:
+      - name: repo_full_name
+        tests:
+          - not_null
+      - name: pr_number
+        tests:
+          - not_null
+      - name: pull_request_id
+        tests:
+          - not_null
+      - name: pull_request_state
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['open', 'closed']
+      - name: created_at
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+
+  - name: stg_github_issues
+    description: "Latest state of each GitHub issue by repository and issue number."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - repo_full_name
+            - issue_number
+    columns:
+      - name: repo_full_name
+        tests:
+          - not_null
+      - name: issue_number
+        tests:
+          - not_null
+      - name: issue_id
+        tests:
+          - not_null
+      - name: issue_state
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['open', 'closed']
+      - name: created_at
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+
+  - name: stg_github_pr_reviews
+    description: "Latest state of each PR review by repository and review id."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - repo_full_name
+            - review_id
+    columns:
+      - name: repo_full_name
+        tests:
+          - not_null
+      - name: pr_number
+        tests:
+          - not_null
+      - name: review_id
+        tests:
+          - not_null
+      - name: review_state
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['APPROVED', 'CHANGES_REQUESTED', 'COMMENTED', 'DISMISSED', 'PENDING']
+      - name: updated_at
+        tests:
+          - not_null
