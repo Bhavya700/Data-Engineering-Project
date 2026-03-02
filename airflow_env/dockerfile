@@ -5,3 +5,4 @@ USER root
 
 USER airflow
 RUN pip install --no-cache-dir "apache-airflow==2.8.1" apache-airflow-providers-google --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-3.8.txt"
+RUN pip install google-cloud-storage google-cloud-bigquery
