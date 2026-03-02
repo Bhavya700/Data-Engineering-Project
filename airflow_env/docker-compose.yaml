@@ -7,15 +7,21 @@ services:
       - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp-key.json
-      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
-      - GCS_BUCKET_RAW=${GCS_BUCKET_RAW}
-      - GCS_BUCKET_ARTIFACTS=${GCS_BUCKET_ARTIFACTS}
-      - BQ_DATASET_RAW=${BQ_DATASET_RAW}
-      - BQ_DATASET_ANALYTICS=${BQ_DATASET_ANALYTICS}
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID:-winged-journey-488904-q9}
+      - GCS_BUCKET_RAW=${GCS_BUCKET_RAW:-gh-raw-de}
+      - GCS_BUCKET_ARTIFACTS=${GCS_BUCKET_ARTIFACTS:-gh-artifacts-de}
+      - BQ_DATASET_RAW=${BQ_DATASET_RAW:-gh_raw}
+      - BQ_DATASET_ANALYTICS=${BQ_DATASET_ANALYTICS:-gh_analytics}
+      - DBT_BQ_PROJECT=${GCP_PROJECT_ID:-winged-journey-488904-q9}
+      - DBT_BQ_DATASET=${BQ_DATASET_ANALYTICS:-gh_analytics}
+      - DBT_BQ_KEYFILE=/opt/airflow/gcp-key.json
+      - DBT_PROFILES_DIR=/opt/airflow/dbt
+      - DBT_PROJECT_DIR=/opt/airflow/dbt
       - PYTHONPATH=/opt/airflow
     volumes:
       - ../dags:/opt/airflow/dags
       - ../ingestion:/opt/airflow/ingestion
+      - ../dbt:/opt/airflow/dbt
       - ../logs:/opt/airflow/logs
       - ./gcp-key.json:/opt/airflow/gcp-key.json
       - ../plugins:/opt/airflow/plugins
@@ -32,15 +38,21 @@ services:
     environment:
       - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
       - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp-key.json
-      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
-      - GCS_BUCKET_RAW=${GCS_BUCKET_RAW}
-      - GCS_BUCKET_ARTIFACTS=${GCS_BUCKET_ARTIFACTS}
-      - BQ_DATASET_RAW=${BQ_DATASET_RAW}
-      - BQ_DATASET_ANALYTICS=${BQ_DATASET_ANALYTICS}
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID:-winged-journey-488904-q9}
+      - GCS_BUCKET_RAW=${GCS_BUCKET_RAW:-gh-raw-de}
+      - GCS_BUCKET_ARTIFACTS=${GCS_BUCKET_ARTIFACTS:-gh-artifacts-de}
+      - BQ_DATASET_RAW=${BQ_DATASET_RAW:-gh_raw}
+      - BQ_DATASET_ANALYTICS=${BQ_DATASET_ANALYTICS:-gh_analytics}
+      - DBT_BQ_PROJECT=${GCP_PROJECT_ID:-winged-journey-488904-q9}
+      - DBT_BQ_DATASET=${BQ_DATASET_ANALYTICS:-gh_analytics}
+      - DBT_BQ_KEYFILE=/opt/airflow/gcp-key.json
+      - DBT_PROFILES_DIR=/opt/airflow/dbt
+      - DBT_PROJECT_DIR=/opt/airflow/dbt
       - PYTHONPATH=/opt/airflow
     volumes:
       - ../dags:/opt/airflow/dags
       - ../ingestion:/opt/airflow/ingestion
+      - ../dbt:/opt/airflow/dbt
       - ../logs:/opt/airflow/logs
       - ./gcp-key.json:/opt/airflow/gcp-key.json
       - ../plugins:/opt/airflow/plugins
