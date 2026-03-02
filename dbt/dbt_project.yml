@@ -2,10 +2,8 @@ name: 'github_health_analytics'
 version: '1.0.0'
 config-version: 2
 
-# This setting configures which "profile" dbt uses for this project.
 profile: 'bq_profile'
 
-# These configurations specify where dbt should look for different types of files.
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
@@ -17,17 +15,22 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
-# Configuring models
 models:
   github_health_analytics:
+    +on_schema_change: sync_all_columns
     staging:
       +materialized: view
     intermediate:
-      +materialized: view
+      +materialized: incremental
+      +incremental_strategy: merge
     marts:
       +materialized: table
 
+snapshots:
+  github_health_analytics:
+    +target_schema: snapshots
+
 vars:
   raw_payload_col: "payload"
-  raw_ingested_at_col: "ingested_at"
+  raw_ingested_at_col: "ingestion_date"
   stale_days: 30
