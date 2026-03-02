@@ -1,0 +1,25 @@
+bq_profile:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('DBT_BQ_PROJECT') }}"
+      dataset: "{{ env_var('DBT_BQ_DATASET', 'gh_analytics') }}"
+      threads: 4
+      keyfile: "{{ env_var('DBT_BQ_KEYFILE') }}"
+      location: US
+      priority: interactive
+      retries: 1
+      timeout_seconds: 300
+    
+    prod:
+      # Similar to dev, but likely to point to a production dataset
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('DBT_BQ_PROJECT') }}"
+      dataset: "prod_gh_analytics"
+      threads: 4
+      keyfile: "{{ env_var('DBT_BQ_KEYFILE') }}"
+      location: US
+      priority: interactive

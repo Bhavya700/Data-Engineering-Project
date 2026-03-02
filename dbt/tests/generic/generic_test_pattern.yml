@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: stg_github_pulls
+    columns:
+      - name: pull_request_id
+        tests:
+          - unique
+          - not_null
+      - name: pull_request_state
+        tests:
+          - accepted_values:
+              values: ['open', 'closed']

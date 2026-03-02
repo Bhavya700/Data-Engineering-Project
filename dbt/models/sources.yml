@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: github
+    # Target the raw dataset where Github data is ingested
+    database: "{{ env_var('DBT_BQ_PROJECT') }}"
+    schema: gh_raw
+    description: "Raw GitHub Data ingested via JSON APIs."
+    tables:
+      - name: github_pulls_raw
+        description: "Raw JSON payloads for pull requests"
+      - name: github_issues_raw
+        description: "Raw JSON payloads for issues"
+      - name: github_pr_reviews_raw
+        description: "Raw JSON payloads for pull request reviews"
