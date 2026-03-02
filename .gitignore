@@ -6,3 +6,10 @@ __pycache__/
 logs/
 airflow_env/data/
 airflow_env/airflow.db
+BigQuerry Tables
+
+# dbt artifacts
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/.user.yml
