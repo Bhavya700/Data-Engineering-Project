@@ -3,7 +3,7 @@ import json
 import time
 import requests
 from datetime import datetime, timezone
-from typing import Iterable, Dict, Any, List
+from typing import Iterable, Dict, Any, List, Optional
 
 GITHUB_API = "https://api.github.com"
 
@@ -14,7 +14,7 @@ def _headers(token: str) -> Dict[str, str]:
         "X-GitHub-Api-Version": "2022-11-28",
     }
 
-def fetch_pull_requests(token: str, repo_full_name: str, since_iso: str | None = None) -> List[Dict[str, Any]]:
+def fetch_pull_requests(token: str, repo_full_name: str, since_iso: Optional[str] = None) -> List[Dict[str, Any]]:
     """
     Fetch PRs via GitHub REST API. For MVP we pull recent PRs using `state=all` and paginate.
     `since_iso` is optional. GitHub pulls API doesn't support `since` directly,

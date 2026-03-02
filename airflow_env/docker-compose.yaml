@@ -8,8 +8,14 @@ services:
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp-key.json
       - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GCS_BUCKET_RAW=${GCS_BUCKET_RAW}
+      - GCS_BUCKET_ARTIFACTS=${GCS_BUCKET_ARTIFACTS}
+      - BQ_DATASET_RAW=${BQ_DATASET_RAW}
+      - BQ_DATASET_ANALYTICS=${BQ_DATASET_ANALYTICS}
+      - PYTHONPATH=/opt/airflow
     volumes:
       - ../dags:/opt/airflow/dags
+      - ../ingestion:/opt/airflow/ingestion
       - ../logs:/opt/airflow/logs
       - ./gcp-key.json:/opt/airflow/gcp-key.json
       - ../plugins:/opt/airflow/plugins
@@ -26,8 +32,15 @@ services:
     environment:
       - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
       - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp-key.json
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GCS_BUCKET_RAW=${GCS_BUCKET_RAW}
+      - GCS_BUCKET_ARTIFACTS=${GCS_BUCKET_ARTIFACTS}
+      - BQ_DATASET_RAW=${BQ_DATASET_RAW}
+      - BQ_DATASET_ANALYTICS=${BQ_DATASET_ANALYTICS}
+      - PYTHONPATH=/opt/airflow
     volumes:
       - ../dags:/opt/airflow/dags
+      - ../ingestion:/opt/airflow/ingestion
       - ../logs:/opt/airflow/logs
       - ./gcp-key.json:/opt/airflow/gcp-key.json
       - ../plugins:/opt/airflow/plugins
