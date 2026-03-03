@@ -76,11 +76,13 @@ docker compose exec airflow-scheduler dbt test --select staging --project-dir /o
 ### 5) Run from Airflow DAG
 
 1. Open Airflow UI.
-2. Trigger DAG `github_dbt_transform_manual`.
-3. It runs:
+2. For full orchestration, trigger DAG `github_ingest_transform_master`.
+3. The master DAG triggers ingestion, checks for new cursor updates, and conditionally triggers `github_dbt_transform_manual`.
+4. `github_dbt_transform_manual` runs:
    - `dbt_deps`
    - `dbt_run`
    - `dbt_test`
+5. You can still trigger `github_dbt_transform_manual` directly for ad-hoc reruns.
 
 ### 6) Validate outputs in BigQuery
 

@@ -132,6 +132,33 @@ Set these in your repository settings before running workflows.
 3. Verify docs files exist in GCS (`index.html`, `manifest.json`, `catalog.json`).
 4. Re-run Airflow DAG `github_dbt_transform_manual` and confirm `dbt_deps -> dbt_run -> dbt_test` still succeeds.
 
+## 🔁 Phase 5 Orchestration (Master DAG)
+
+The project now includes a master orchestration DAG:
+
+- `github_ingest_transform_master`
+
+### Behavior
+
+1. Triggers these ingestion DAGs in parallel:
+   - `github_pulls_ingestion`
+   - `github_issues_ingestion`
+   - `github_pr_reviews_ingestion`
+2. Waits for their terminal tasks via `ExternalTaskSensor(mode="reschedule")`.
+3. Checks `gh_raw.ingestion_cursors.updated_at` for updates since master run start.
+4. If updates exist, triggers `github_dbt_transform_manual` and waits for `dbt_test`.
+5. If no updates exist, skips dbt and finishes successfully.
+
+### Run Flow
+
+1. Open Airflow UI.
+2. Trigger `github_ingest_transform_master` manually.
+3. Verify branch outcome:
+   - `trigger_dbt_transform` path when new data exists.
+   - `skip_dbt_no_new_data` path when no new data exists.
+
+`github_dbt_transform_manual` remains available for manual fallback runs.
+
 ## 🛠️ Tech Stack Focus
 - **Languages:** Python, SQL
 - **Orchestration:** Apache Airflow
