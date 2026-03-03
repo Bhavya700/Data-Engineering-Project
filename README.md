@@ -84,6 +84,54 @@ github-health-analytics/
    dbt run
    ```
 
+## ✅ CI + Docs Publish (Phase 4)
+
+This repo now includes GitHub Actions workflows for dbt validation and docs publication:
+
+- `.github/workflows/dbt_ci.yml`
+- `.github/workflows/dbt_docs_publish.yml`
+
+### Required GitHub configuration
+
+Set these in your repository settings before running workflows.
+
+1. **Secret**
+   - `GCP_SA_KEY_JSON`: full service account JSON content
+
+2. **Repository variables**
+   - `GCP_PROJECT_ID=winged-journey-488904-q9`
+   - `DBT_BQ_DATASET=gh_analytics`
+   - `DBT_BQ_LOCATION=us-west1`
+   - `GCS_BUCKET_ARTIFACTS=gh-artifacts-de`
+
+### Workflow behavior
+
+1. **dbt CI** (`dbt_ci.yml`)
+   - Trigger: pull requests + pushes to `main`
+   - Runs:
+     - `dbt deps`
+     - `dbt parse`
+     - `dbt compile`
+     - `dbt test --select staging`
+   - Fails fast when required secrets/vars are missing.
+
+2. **dbt docs publish** (`dbt_docs_publish.yml`)
+   - Trigger: manual (`workflow_dispatch`)
+   - Runs:
+     - `dbt deps`
+     - `dbt docs generate`
+   - Publishes to:
+     - `gs://gh-artifacts-de/dbt-docs/latest/`
+     - `gs://gh-artifacts-de/dbt-docs/runs/<github_run_id>/`
+   - Uploads `dbt/target` as a GitHub artifact.
+
+### Verification checklist
+
+1. Open a PR and confirm `dbt-ci` passes.
+2. Manually trigger `dbt-docs-publish`.
+3. Verify docs files exist in GCS (`index.html`, `manifest.json`, `catalog.json`).
+4. Re-run Airflow DAG `github_dbt_transform_manual` and confirm `dbt_deps -> dbt_run -> dbt_test` still succeeds.
+
 ## 🛠️ Tech Stack Focus
 - **Languages:** Python, SQL
 - **Orchestration:** Apache Airflow

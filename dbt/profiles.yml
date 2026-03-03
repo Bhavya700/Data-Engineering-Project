@@ -8,7 +8,7 @@ bq_profile:
       schema: "{{ env_var('DBT_BQ_DATASET', 'gh_analytics') }}"
       threads: 4
       keyfile: "{{ env_var('DBT_BQ_KEYFILE') }}"
-      location: us-west1
+      location: "{{ env_var('DBT_BQ_LOCATION', 'us-west1') }}"
       priority: interactive
       retries: 1
       timeout_seconds: 300
@@ -20,7 +20,7 @@ bq_profile:
       schema: "{{ env_var('DBT_BQ_DATASET_PROD', 'prod_gh_analytics') }}"
       threads: 4
       keyfile: "{{ env_var('DBT_BQ_KEYFILE') }}"
-      location: us-west1
+      location: "{{ env_var('DBT_BQ_LOCATION', 'us-west1') }}"
       priority: interactive
       retries: 1
       timeout_seconds: 300
