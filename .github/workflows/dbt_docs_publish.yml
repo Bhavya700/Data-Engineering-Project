@@ -12,7 +12,6 @@ jobs:
       DBT_BQ_PROJECT: ${{ vars.GCP_PROJECT_ID }}
       DBT_BQ_DATASET: ${{ vars.DBT_BQ_DATASET }}
       DBT_BQ_LOCATION: ${{ vars.DBT_BQ_LOCATION }}
-      DBT_BQ_KEYFILE: ${{ runner.temp }}/gcp-key.json
       GCS_BUCKET_ARTIFACTS: ${{ vars.GCS_BUCKET_ARTIFACTS }}
     steps:
       - name: Checkout repository
@@ -55,8 +54,10 @@ jobs:
           GCP_SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
         run: |
           set -euo pipefail
+          export DBT_BQ_KEYFILE="${RUNNER_TEMP}/gcp-key.json"
           printf '%s' "${GCP_SA_KEY_JSON}" > "${DBT_BQ_KEYFILE}"
           chmod 600 "${DBT_BQ_KEYFILE}"
+          echo "DBT_BQ_KEYFILE=${DBT_BQ_KEYFILE}" >> "${GITHUB_ENV}"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
