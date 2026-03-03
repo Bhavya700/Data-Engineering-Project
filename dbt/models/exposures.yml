@@ -1,0 +1,17 @@
+version: 2
+
+exposures:
+  - name: repo_health_dashboard
+    type: dashboard
+    maturity: medium
+    url: https://lookerstudio.google.com/
+    description: >
+      Dashboard exposure for repository health KPIs, including PR cycle metrics,
+      review responsiveness, and issue backlog/staleness trends.
+    depends_on:
+      - ref('mart_repo_health_daily')
+      - ref('fact_pr_cycle_time')
+      - ref('fact_issue_aging')
+    owner:
+      name: GitHub Health Analytics Maintainer
+      email: maintainer@example.com

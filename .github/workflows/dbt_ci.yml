@@ -1,0 +1,69 @@
+name: dbt-ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  dbt-validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      DBT_BQ_PROJECT: ${{ vars.GCP_PROJECT_ID }}
+      DBT_BQ_DATASET: ${{ vars.DBT_BQ_DATASET }}
+      DBT_BQ_LOCATION: ${{ vars.DBT_BQ_LOCATION }}
+      DBT_BQ_KEYFILE: ${{ runner.temp }}/gcp-key.json
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required CI configuration
+        env:
+          GCP_SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
+        run: |
+          set -euo pipefail
+          missing=()
+          [ -n "${GCP_SA_KEY_JSON:-}" ] || missing+=("secrets.GCP_SA_KEY_JSON")
+          [ -n "${DBT_BQ_PROJECT:-}" ] || missing+=("vars.GCP_PROJECT_ID")
+          [ -n "${DBT_BQ_DATASET:-}" ] || missing+=("vars.DBT_BQ_DATASET")
+          [ -n "${DBT_BQ_LOCATION:-}" ] || missing+=("vars.DBT_BQ_LOCATION")
+          if [ "${#missing[@]}" -gt 0 ]; then
+            printf 'Missing required configuration:\n- %s\n' "${missing[@]}"
+            exit 1
+          fi
+          if [ "${DBT_BQ_LOCATION}" != "us-west1" ]; then
+            echo "DBT_BQ_LOCATION must be us-west1 for this project."
+            exit 1
+          fi
+          echo "Using project=${DBT_BQ_PROJECT}, dataset=${DBT_BQ_DATASET}, location=${DBT_BQ_LOCATION}"
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dbt dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          pip install dbt-bigquery==1.7.9 google-cloud-bigquery
+
+      - name: Write service account key
+        env:
+          GCP_SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
+        run: |
+          set -euo pipefail
+          printf '%s' "${GCP_SA_KEY_JSON}" > "${DBT_BQ_KEYFILE}"
+          chmod 600 "${DBT_BQ_KEYFILE}"
+
+      - name: Run dbt CI checks
+        working-directory: dbt
+        run: |
+          set -euo pipefail
+          dbt deps --profiles-dir . --project-dir .
+          dbt parse --profiles-dir . --project-dir .
+          dbt compile --profiles-dir . --project-dir .
+          dbt test --select staging --profiles-dir . --project-dir .
