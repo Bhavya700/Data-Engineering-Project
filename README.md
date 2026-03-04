@@ -159,6 +159,51 @@ The project now includes a master orchestration DAG:
 
 `github_dbt_transform_manual` remains available for manual fallback runs.
 
+## 📸 Phase 6 Snapshot + Dashboard
+
+Phase 6 adds a dedicated snapshot DAG and a dashboard layer so you can read analytics without directly querying BigQuery tables.
+
+### New snapshot DAG
+
+- `github_dbt_snapshot_manual`
+
+It runs:
+1. `dbt_deps_snapshot`
+2. `dbt_snapshot`
+
+This DAG is intentionally separate from `github_ingest_transform_master` so snapshots remain optional and do not slow every orchestration run.
+
+### Manual refresh run order
+
+1. Trigger `github_ingest_transform_master` (ingestion + transform path).
+2. Trigger `github_dbt_snapshot_manual` (history capture path).
+3. Refresh dashboard.
+
+### Looker Studio dashboard mapping
+
+Build the dashboard in Looker Studio with BigQuery data sources:
+
+1. Primary table:
+   - `gh_analytics.mart_repo_health_daily`
+2. Supporting tables:
+   - `gh_analytics.fact_pr_cycle_time`
+   - `gh_analytics.fact_issue_aging`
+
+Suggested first visuals:
+1. Time series: `prs_created_count`, `prs_merged_count`
+2. Time series: `open_issues_count`, `stale_issues_count`
+3. Scorecards:
+   - average `avg_time_to_first_review_hours`
+   - average `avg_time_to_merge_hours`
+4. Table: repos ordered by `stale_issues_count`
+
+Suggested controls:
+1. Date range control
+2. `repo_full_name` filter control
+
+After publishing the report, update:
+- `dbt/models/exposures.yml` `repo_health_dashboard.url`
+
 ## 🛠️ Tech Stack Focus
 - **Languages:** Python, SQL
 - **Orchestration:** Apache Airflow
