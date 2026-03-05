@@ -84,7 +84,7 @@ github-health-analytics/
    dbt run
    ```
 
-## ✅ CI + Docs Publish (Phase 4)
+## ✅ CI + Docs Publish 
 
 This repo now includes GitHub Actions workflows for dbt validation and docs publication:
 
@@ -132,7 +132,7 @@ Set these in your repository settings before running workflows.
 3. Verify docs files exist in GCS (`index.html`, `manifest.json`, `catalog.json`).
 4. Re-run Airflow DAG `github_dbt_transform_manual` and confirm `dbt_deps -> dbt_run -> dbt_test` still succeeds.
 
-## 🔁 Phase 5 Orchestration (Master DAG)
+## Orchestration Master DAG
 
 The project now includes a master orchestration DAG:
 
@@ -159,9 +159,6 @@ The project now includes a master orchestration DAG:
 
 `github_dbt_transform_manual` remains available for manual fallback runs.
 
-## 📸 Phase 6 Snapshot + Dashboard
-
-Phase 6 adds a dedicated snapshot DAG and a dashboard layer so you can read analytics without directly querying BigQuery tables.
 
 ### New snapshot DAG
 
