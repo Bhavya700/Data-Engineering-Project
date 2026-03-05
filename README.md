@@ -211,9 +211,3 @@ After publishing the report, update:
 - **Data Warehouse:** Google BigQuery
 - **Cloud Storage:** Google Cloud Storage (GCS)
 - **Containerization:** Docker
-
-## 🤖 AI Usage in Development
-Artificial Intelligence (LLMs) was strategically used during the development of this pipeline to accelerate the workflow:
-- **Migration & Refactoring:** Assisted in migrating dbt project configurations and SQL dialects from another data warehouse architecture into native BigQuery Standard SQL, while maintaining the intended logic.
-- **Debugging Orchestration:** Served as a debugging partner to rapidly parse Airflow stack traces when encountering complex pipeline failures, minimizing downtime.
-- **Repository Security:** Provided precise git strategies for security remediation (e.g., rewriting branch history) to securely scrub accidental secrets from version control.
