@@ -4,7 +4,7 @@ exposures:
   - name: repo_health_dashboard
     type: dashboard
     maturity: medium
-    url: https://lookerstudio.google.com/reporting/REPLACE_WITH_REPORT_ID
+    url: https://lookerstudio.google.com/s/hzhOR8A3IPU
     description: >
       Dashboard exposure for repository health KPIs, including PR cycle metrics,
       review responsiveness, and issue backlog/staleness trends.
